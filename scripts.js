@@ -14,6 +14,22 @@ async function getData() {
     }
 }
 
+function getTLD(website) {
+    try {
+        // Parse the website
+        const splittedWebsite = website.split('.');
+        if (splittedWebsite.length < 2) {
+            return '';
+        }
+        console.log(splittedWebsite)
+        // Return the last part of the domain
+        return splittedWebsite[splittedWebsite.length - 1];
+    } catch (error) {
+        console.error(`Invalid URL: ${website}`, error);
+        return '';
+    }
+}
+
 function renderColumn(title, users) { 
     // Create column
     const columnDiv = document.createElement('div'); 
