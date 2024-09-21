@@ -1,5 +1,18 @@
-const USERS_ENDPOINT = 'https://jsonplaceholder.typicode.com/users'; 
-//////////////////////////////////////////////////////////////////// 
+async function getData() {
+    const USERS_ENDPOINT = 'https://jsonplaceholder.typicode.com/users'; 
+    try {
+      // Fetch data from the API endpoint
+      const response = await fetch(USERS_ENDPOINT);
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+  
+      const json = await response.json();
+      console.log(json);
+    } catch (error) {
+      console.error(error.message);
+    }
+}
 
 function renderColumn(title, users) { 
     // Create column
@@ -34,4 +47,4 @@ function renderColumn(title, users) {
     const wrapperDiv = document.getElementById('wrapper'); 
     wrapperDiv.appendChild(columnDiv); 
 }
-renderColumn();
+getData();
