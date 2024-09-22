@@ -58,7 +58,7 @@ function groupUsersByTLD(users) {
 
 function createParagraph(text) {
     if (typeof text !== 'string') {
-        console.error('Invalid input:', text, ' text must be a string');
+        console.error('Invalid input: text', text, 'must be a string');
         return null;
     }
     const paragraph = document.createElement('p'); 
@@ -92,7 +92,7 @@ function createCard(user) {
 
 function createColumn(title) {
     if (typeof title !== 'string') {
-        console.error('Invalid input:', title, ' title must be a string');
+        console.error('Invalid input: title', title, 'must be a string');
         return null;
     }
     // Create column element
@@ -158,4 +158,4 @@ async function main() {
 
 main();
 
-module.exports = { extractTLD, groupUsersByTLD, createParagraph, fetchData };
+module.exports = { fetchData, extractTLD, groupUsersByTLD, createParagraph, createCard, appendElementToWrapper, createColumn, renderColumn, renderTLDGroups };
