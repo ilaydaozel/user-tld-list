@@ -1,7 +1,8 @@
-const { fetchData, extractTLD, groupUsersByTLD, createParagraph, createCard, appendElementToWrapper, createColumn, renderColumn, renderTLDGroups } = require('./scripts.js');
+const { main, fetchData, extractTLD, groupUsersByTLD, createParagraph, createCard, appendElementToWrapper, createColumn, renderColumn, renderTLDGroups } = require('./scripts.js');
 
 // Mock global fetch
 global.fetch = jest.fn();
+
 
 describe('fetchData', () => {
     beforeEach(() => {
@@ -181,5 +182,32 @@ describe('renderTLDGroups', () => {
         console.error = jest.fn(); // Mock console.error
         renderTLDGroups({});
         expect(console.error).toHaveBeenCalledWith('Invalid input: tldGroups must be a non-empty object');
+    });
+});
+
+describe('main', () => {
+    let loadingIndicator;
+
+    beforeEach(() => {
+        // Setup the DOM with a loading indicator
+        document.body.innerHTML = '<div id="loading" style="display: none;">Loading...</div>';
+        loadingIndicator = document.getElementById('loading');
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks(); // Clear any previously set mocks after each test
+    });
+
+    it('should show and hide loading indicator', async () => {
+        // Mock fetchData, groupUsersByTLD, and renderTLDGroups
+        const fetchData = jest.fn().mockResolvedValue([{ name: 'User1', website: 'https://example.com' }]);
+        const groupUsersByTLD = jest.fn().mockReturnValue({ com: [{ name: 'User1', website: 'https://example.com' }] });
+        const renderTLDGroups = jest.fn();
+
+        // Call the main function
+        await main(fetchData, groupUsersByTLD, renderTLDGroups);
+
+        // Verify loading indicator is hidden after the function completes
+        expect(loadingIndicator.style.display).toBe('none');
     });
 });
