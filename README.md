@@ -16,6 +16,7 @@ A JavaScript application that fetches user data from an API, extracts top-level 
 - Responsive UI.
 - Has 100% unit test coverage.
 - Includes error handling.
+- Includes loading management for a better user experience.
 
 ## Deployment
 
