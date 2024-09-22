@@ -11,6 +11,7 @@ async function fetchData() {
         return json; // Return the fetched data
     } catch (error) {
         console.error(error.message);
+        return []; // Return an empty array in case of error
     }
 }
 
@@ -32,29 +33,23 @@ function extractTLD(website) {
 }
 
 // Sort data by TLD type and group users by TLD
-async function sortTLDs() {
-    const users = await getData(); // Await the fetched data
+function sortUsersByTLD(users) {
     const tlds = {}; // Create an empty object to store TLD groups
-
     users.forEach((user) => {
         // Get the top-level domain of the website
-        const tld = getTLD(user.website);
-
-        // Check if the TLD key already exists, otherwise create it
-        if (!tlds[tld]) {
-            tlds[tld] = [];
+        const tld = extractTLD(user.website);
+        if(tld != '') {
+            // Check if the TLD key already exists, otherwise create it
+            if (!tlds[tld]) {
+                tlds[tld] = [];
+            }
         }
-
         // Push the user into the TLD group
         tlds[tld].push(user);
     });
 
     return tlds; // Return the grouped users by TLD
 }
-
-// Example: Call sortTLDs and log the result
-sortTLDs().then((tlds) => console.log("tlds:", tlds));
-
 
 function renderColumn(title, users) { 
     // Create column
@@ -89,3 +84,10 @@ function renderColumn(title, users) {
     const wrapperDiv = document.getElementById('wrapper'); 
     wrapperDiv.appendChild(columnDiv); 
 }
+
+async function main() {
+    users = await fetchData();
+    console.log(sortUsersByTLD(users))
+}
+
+main()
