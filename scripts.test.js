@@ -1,7 +1,42 @@
-const { extractTLD, groupUsersByTLD, createParagraph, fetchData } = require('./scripts.js');
+const { fetchData, extractTLD, groupUsersByTLD, createParagraph, createCard, appendElementToWrapper, createColumn, renderColumn, renderTLDGroups } = require('./scripts.js');
 
 // Mock global fetch
 global.fetch = jest.fn();
+
+describe('fetchData', () => {
+    beforeEach(() => {
+        fetch.mockClear();
+    });
+
+    it('should fetch user data and return JSON', async () => {
+        // Mock successful fetch response
+        fetch.mockResolvedValue({
+            ok: true,
+            json: async () => [{ id: 1, name: 'John Doe' }]
+        });
+
+        const data = await fetchData();
+        expect(data).toEqual([{ id: 1, name: 'John Doe' }]);
+    });
+
+    it('should return an empty array when fetch fails', async () => {
+        fetch.mockResolvedValue({
+            ok: false,
+            status: 404,
+            json: async () => [],
+        });
+
+        const data = await fetchData();
+        expect(data).toEqual([]);
+    });
+
+    it('should handle fetch errors gracefully', async () => {
+        fetch.mockRejectedValue(new Error('Network Error'));
+
+        const data = await fetchData();
+        expect(data).toEqual([]);
+    });
+});
 
 describe('extractTLD', () => {
     it('should return the TLD for a valid website URL', () => {
@@ -51,37 +86,100 @@ describe('createParagraph', () => {
     });
 });
 
-describe('fetchData', () => {
+describe('createCard', () => {
+    it('should create a card for a valid user object', () => {
+        const user = { name: 'User1', username: 'user1', website: 'https://example.com' };
+        const card = createCard(user);
+        expect(card).not.toBeNull();
+        expect(card.classList.contains('card')).toBe(true);
+        expect(card.querySelector('p').textContent).toBe('Name: User1');
+    });
+
+    it('should return null for an invalid user object', () => {
+        const invalidUser = { name: 'User1' }; // Missing username and website
+        console.error = jest.fn();
+        const card = createCard(invalidUser);
+        expect(card).toBeNull();
+        expect(console.error).toHaveBeenCalledWith('Invalid user object:', invalidUser);
+    });
+});
+
+describe('createColumn', () => {
+    it('should create a column element with the specified title', () => {
+        const column = createColumn('Test Column');
+        expect(column).not.toBeNull();
+        expect(column.querySelector('h3').textContent).toBe('Test Column');
+    });
+
+    it('should return null for an invalid title', () => {
+        const invalidColumn = createColumn(123);
+        expect(invalidColumn).toBeNull();
+    });
+});
+
+describe('appendElementToWrapper', () => {
     beforeEach(() => {
-        fetch.mockClear();
+        document.body.innerHTML = '<div id="wrapper"></div>'; // Setup wrapper
     });
 
-    it('should fetch user data and return JSON', async () => {
-        // Mock successful fetch response
-        fetch.mockResolvedValue({
-            ok: true,
-            json: async () => [{ id: 1, name: 'John Doe' }]
-        });
-
-        const data = await fetchData();
-        expect(data).toEqual([{ id: 1, name: 'John Doe' }]);
+    it('should append a columnDiv to the wrapper', () => {
+        const columnDiv = createColumn('Test Column');
+        appendElementToWrapper(columnDiv);
+        const wrapper = document.getElementById('wrapper');
+        expect(wrapper.children.length).toBe(1);
     });
 
-    it('should return an empty array when fetch fails', async () => {
-        fetch.mockResolvedValue({
-            ok: false,
-            status: 404,
-            json: async () => [],
-        });
+    it('should log an error if wrapper div is not found', () => {
+        document.body.innerHTML = '';
+        console.error = jest.fn();
+        appendElementToWrapper(createColumn('Test Column'));
+        expect(console.error).toHaveBeenCalledWith('Wrapper div not found');
+    });
+})
 
-        const data = await fetchData();
-        expect(data).toEqual([]);
+
+describe('renderColumn', () => {
+    beforeEach(() => {
+        document.body.innerHTML = '<div id="wrapper"></div>'; // Setup wrapper
     });
 
-    it('should handle fetch errors gracefully', async () => {
-        fetch.mockRejectedValue(new Error('Network Error'));
+    it('should render a column with user cards', () => {
+        const users = [
+            { name: 'User1', username: 'user1', website: 'https://example.com' },
+            { name: 'User2', username: 'user2', website: 'https://example.org' },
+        ];
+        const columnTitle = 'Test Column';
+        renderColumn(columnTitle, users);
+        const columnDiv = document.querySelector('.column');
+        expect(columnDiv).not.toBeNull();
+        expect(columnDiv.querySelector('h3').textContent).toBe(columnTitle);
+        expect(columnDiv.querySelectorAll('.card').length).toBe(2);
+    });
 
-        const data = await fetchData();
-        expect(data).toEqual([]);
+    it('should handle the case when createColumn returns null', () => {
+        console.error = jest.fn(); // Mock console.error
+        renderColumn(null, []);
+        expect(console.error).toHaveBeenCalledWith('Error creating column for title: null');
+    });
+});
+
+describe('renderTLDGroups', () => {
+    beforeEach(() => {
+        document.body.innerHTML = '<div id="wrapper"></div>'; // Setup wrapper
+    });
+    
+    it('should render columns for each TLD group', () => {
+        const tldGroups = {
+            com: [{ name: 'User1', username: 'user1', website: 'https://example.com' }],
+            org: [{ name: 'User2', username: 'user2', website: 'https://example.org' }],
+        };
+        renderTLDGroups(tldGroups);
+        expect(document.querySelectorAll('.column').length).toBe(2); // One for each TLD
+    });
+
+    it('should log an error for an empty tldGroups', () => {
+        console.error = jest.fn(); // Mock console.error
+        renderTLDGroups({});
+        expect(console.error).toHaveBeenCalledWith('Invalid input: tldGroups must be a non-empty object');
     });
 });
