@@ -59,7 +59,7 @@ function groupUsersByTLD(users) {
 function createParagraph(text) {
     if (typeof text !== 'string') {
         console.error('Invalid input:', text, ' text must be a string');
-        return document.createTextNode('Invalid text');
+        return null;
     }
     const paragraph = document.createElement('p'); 
     paragraph.textContent = text; 
@@ -83,8 +83,9 @@ function createCard(user) {
 
     // Append paragraphs to the card element
     cardDiv.appendChild(nameP); 
-    cardDiv.appendChild(usernameP); 
-    cardDiv.appendChild(websiteP); 
+    if (nameP) cardDiv.appendChild(nameP);
+    if (usernameP) cardDiv.appendChild(usernameP); 
+    if (nameP) cardDiv.appendChild(websiteP); 
 
     return cardDiv;  // Return the card element for further usage in column rendering
 }
@@ -156,3 +157,5 @@ async function main() {
 }
 
 main();
+
+module.exports = { extractTLD, groupUsersByTLD, createParagraph, fetchData };
