@@ -32,8 +32,8 @@ function extractTLD(website) {
     }
 }
 
-// Sort data by TLD type and group users by TLD
-function sortUsersByTLD(users) {
+// Group users by TLD
+function groupUsersByTLD(users) {
     const tlds = {}; // Create an empty object to store TLD groups
     users.forEach((user) => {
         // Get the top-level domain of the website
@@ -49,6 +49,12 @@ function sortUsersByTLD(users) {
     });
 
     return tlds; // Return the grouped users by TLD
+}
+
+function renderTLDGroups(tldGroups) {
+    Object.keys(tldGroups).forEach((tld) => {
+        renderColumn(tld, tldGroups[tld]);
+    })
 }
 
 function renderColumn(title, users) { 
@@ -87,7 +93,8 @@ function renderColumn(title, users) {
 
 async function main() {
     users = await fetchData();
-    console.log(sortUsersByTLD(users))
+    tldGroups = groupUsersByTLD(users)
+    renderTLDGroups(tldGroups);
 }
 
 main()
