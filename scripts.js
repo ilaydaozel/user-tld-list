@@ -120,7 +120,7 @@ function appendElementToWrapper(columnDiv) {
 }
 
 function renderColumn(title, users) { 
-    const columnDiv = createColumn(title);
+    const columnDiv = createColumn('.' + title);
 
     if (!columnDiv) {
         console.error(`Error creating column for title: ${title}`);
@@ -151,9 +151,18 @@ function renderTLDGroups(tldGroups) {
 }
 
 async function main() {
-    const users = await fetchData();
-    const tldGroups = groupUsersByTLD(users);
-    renderTLDGroups(tldGroups);
+    const loadingIndicator = document.getElementById('loading');
+    loadingIndicator.style.display = 'block';
+
+    try {
+        const users = await fetchData();
+        const tldGroups = groupUsersByTLD(users);
+        renderTLDGroups(tldGroups);
+    } catch (error) {
+        console.error('Error in main function:', error);
+    } finally {
+        loadingIndicator.style.display = 'none';
+    }
 }
 
 main();
