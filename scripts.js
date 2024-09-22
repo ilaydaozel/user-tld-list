@@ -167,4 +167,4 @@ async function main() {
 
 main();
 
-module.exports = { fetchData, extractTLD, groupUsersByTLD, createParagraph, createCard, appendElementToWrapper, createColumn, renderColumn, renderTLDGroups };
+if (typeof module !== 'undefined') module.exports = { fetchData, extractTLD, groupUsersByTLD, createParagraph, createCard, appendElementToWrapper, createColumn, renderColumn, renderTLDGroups };
