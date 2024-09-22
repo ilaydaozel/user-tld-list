@@ -1,5 +1,6 @@
+const USERS_ENDPOINT = 'https://jsonplaceholder.typicode.com/users'; 
+
 async function fetchData() {
-    const USERS_ENDPOINT = 'https://jsonplaceholder.typicode.com/users'; 
     try {
         // Fetch data from the API endpoint
         const response = await fetch(USERS_ENDPOINT);
@@ -51,49 +52,76 @@ function groupUsersByTLD(users) {
     return tlds; // Return the grouped users by TLD
 }
 
+function createParagraph(text) {
+    const paragraph = document.createElement('p'); 
+    paragraph.textContent = text; 
+    return paragraph;
+}
+
+function createCard(user) {
+    // Create card element
+    const cardDiv = document.createElement('div'); 
+    cardDiv.classList.add('card'); 
+
+    // Create paragraphs
+    const nameP = createParagraph(`Name: ${user.name}`); 
+    const usernameP = createParagraph(`Username: ${user.username}`); 
+    const websiteP = createParagraph(`Website: ${user.website}`);
+
+    // Append paragraphs to the card element
+    cardDiv.appendChild(nameP); 
+    cardDiv.appendChild(usernameP); 
+    cardDiv.appendChild(websiteP); 
+
+    return cardDiv;  // Return the card element for further usage in column rendering
+}
+
+function createColumn(title) {
+    // Create column element
+    const columnDiv = document.createElement('div'); 
+    columnDiv.classList.add('column'); 
+
+    // Create column title
+    const h3 = document.createElement('h3'); 
+    h3.textContent = title; 
+
+    // Append column title to the column div
+    columnDiv.appendChild(h3); 
+
+    return columnDiv; // Return the column element for further usage in column rendering
+}
+
+function appendElementToWrapper() {
+    // Get the wrapper div
+    const wrapperDiv = document.getElementById('wrapper');
+    wrapperDiv.appendChild(columnDiv); 
+}
+
+function renderColumn(title, users) { 
+    const columnDiv = createColumn(title);
+
+    // Iterate through users
+    users.forEach((user) => { 
+        cardDiv = createCard(user)
+        // Put the card to the column div
+        columnDiv.appendChild(cardDiv); 
+    }); 
+
+    // Append element to the dom
+    appendElementToWrapper(columnDiv);
+}
+
+
+// Render each TLD group
 function renderTLDGroups(tldGroups) {
     Object.keys(tldGroups).forEach((tld) => {
         renderColumn(tld, tldGroups[tld]);
     })
 }
 
-function renderColumn(title, users) { 
-    // Create column
-    const columnDiv = document.createElement('div'); 
-    columnDiv.classList.add('column'); 
-    // Create column title
-    const h3 = document.createElement('h3'); 
-    h3.textContent = title; 
-    columnDiv.appendChild(h3); 
-
-    // Iterate through users
-    users.forEach((user) => { 
-        // Create card for a user
-        const cardDiv = document.createElement('div'); 
-        cardDiv.classList.add('card'); 
-        // Name text
-        const nameP = document.createElement('p'); 
-        nameP.textContent = `Name: ${user.name}`; 
-        cardDiv.appendChild(nameP); 
-        // Username text
-        const usernameP = document.createElement('p'); 
-        usernameP.textContent = `Username: ${user.username}`; 
-        cardDiv.appendChild(usernameP); 
-        // Website text
-        const websiteP = document.createElement('p'); 
-        websiteP.textContent = `Website: ${user.website}`; 
-        cardDiv.appendChild(websiteP); 
-        // Put the card to the column div
-        columnDiv.appendChild(cardDiv); 
-    }); 
-    // Wrap the column
-    const wrapperDiv = document.getElementById('wrapper'); 
-    wrapperDiv.appendChild(columnDiv); 
-}
-
 async function main() {
-    users = await fetchData();
-    tldGroups = groupUsersByTLD(users)
+    const users = await fetchData();
+    const tldGroups = groupUsersByTLD(users)
     renderTLDGroups(tldGroups);
 }
 
