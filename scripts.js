@@ -1,34 +1,60 @@
-async function getData() {
+async function fetchData() {
     const USERS_ENDPOINT = 'https://jsonplaceholder.typicode.com/users'; 
     try {
-      // Fetch data from the API endpoint
-      const response = await fetch(USERS_ENDPOINT);
-      if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
-      }
-  
-      const json = await response.json();
-      console.log(json);
+        // Fetch data from the API endpoint
+        const response = await fetch(USERS_ENDPOINT);
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+
+        const json = await response.json();
+        return json; // Return the fetched data
     } catch (error) {
-      console.error(error.message);
+        console.error(error.message);
     }
 }
 
-function getTLD(website) {
+// Parse the TLD (Top Level Domain) from the website URL
+function extractTLD(website) {
+    if (!website) return '';
     try {
         // Parse the website
         const splittedWebsite = website.split('.');
         if (splittedWebsite.length < 2) {
-            return '';
+            return ''; // If it doesn't contain a domain then return empty string
         }
-        console.log(splittedWebsite)
         // Return the last part of the domain
         return splittedWebsite[splittedWebsite.length - 1];
     } catch (error) {
-        console.error(`Invalid URL: ${website}`, error);
-        return '';
+        console.error(`Error extracting TLD: ${website}`, error);
+        return ''; // Handle invalid URL case
     }
 }
+
+// Sort data by TLD type and group users by TLD
+async function sortTLDs() {
+    const users = await getData(); // Await the fetched data
+    const tlds = {}; // Create an empty object to store TLD groups
+
+    users.forEach((user) => {
+        // Get the top-level domain of the website
+        const tld = getTLD(user.website);
+
+        // Check if the TLD key already exists, otherwise create it
+        if (!tlds[tld]) {
+            tlds[tld] = [];
+        }
+
+        // Push the user into the TLD group
+        tlds[tld].push(user);
+    });
+
+    return tlds; // Return the grouped users by TLD
+}
+
+// Example: Call sortTLDs and log the result
+sortTLDs().then((tlds) => console.log("tlds:", tlds));
+
 
 function renderColumn(title, users) { 
     // Create column
@@ -63,4 +89,3 @@ function renderColumn(title, users) {
     const wrapperDiv = document.getElementById('wrapper'); 
     wrapperDiv.appendChild(columnDiv); 
 }
-getData();
