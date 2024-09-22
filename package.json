@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "test": "jest",
+    "coverage": "jest  --coverage"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "collectCoverage": true,
+    "coverageReporters": ["json", "html"]
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  }
+}
