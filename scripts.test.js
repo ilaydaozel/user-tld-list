@@ -106,9 +106,9 @@ describe('createCard', () => {
 
 describe('createColumn', () => {
     it('should create a column element with the specified title', () => {
-        const column = createColumn('Test Column');
+        const column = createColumn('domain');
         expect(column).not.toBeNull();
-        expect(column.querySelector('h3').textContent).toBe('Test Column');
+        expect(column.querySelector('h3').textContent).toBe('.domain');
     });
 
     it('should return null for an invalid title', () => {
@@ -119,7 +119,7 @@ describe('createColumn', () => {
 
 describe('appendElementToWrapper', () => {
     beforeEach(() => {
-        document.body.innerHTML = '<div id="wrapper"></div>'; // Setup wrapper
+        document.body.innerHTML = '<div id="loading" style="display: none;">Loading...</div><div id="wrapper"></div>';
     });
 
     it('should append a columnDiv to the wrapper', () => {
@@ -140,7 +140,7 @@ describe('appendElementToWrapper', () => {
 
 describe('renderColumn', () => {
     beforeEach(() => {
-        document.body.innerHTML = '<div id="wrapper"></div>'; // Setup wrapper
+        document.body.innerHTML = '<div id="loading" style="display: none;">Loading...</div><div id="wrapper"></div>';
     });
 
     it('should render a column with user cards', () => {
@@ -148,11 +148,11 @@ describe('renderColumn', () => {
             { name: 'User1', username: 'user1', website: 'https://example.com' },
             { name: 'User2', username: 'user2', website: 'https://example.org' },
         ];
-        const columnTitle = 'Test Column';
+        const columnTitle = 'domain';
         renderColumn(columnTitle, users);
         const columnDiv = document.querySelector('.column');
         expect(columnDiv).not.toBeNull();
-        expect(columnDiv.querySelector('h3').textContent).toBe(columnTitle);
+        expect(columnDiv.querySelector('h3').textContent).toBe('.' + columnTitle);
         expect(columnDiv.querySelectorAll('.card').length).toBe(2);
     });
 
@@ -165,7 +165,7 @@ describe('renderColumn', () => {
 
 describe('renderTLDGroups', () => {
     beforeEach(() => {
-        document.body.innerHTML = '<div id="wrapper"></div>'; // Setup wrapper
+        document.body.innerHTML = '<div id="loading" style="display: none;">Loading...</div><div id="wrapper"></div>';
     });
     
     it('should render columns for each TLD group', () => {

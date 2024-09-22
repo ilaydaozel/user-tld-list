@@ -101,7 +101,7 @@ function createColumn(title) {
 
     // Create column title
     const h3 = document.createElement('h3'); 
-    h3.textContent = title; 
+    h3.textContent = '.' + title; 
 
     // Append column title to the column div
     columnDiv.appendChild(h3); 
@@ -120,7 +120,7 @@ function appendElementToWrapper(columnDiv) {
 }
 
 function renderColumn(title, users) { 
-    const columnDiv = createColumn('.' + title);
+    const columnDiv = createColumn(title);
 
     if (!columnDiv) {
         console.error(`Error creating column for title: ${title}`);
@@ -152,7 +152,11 @@ function renderTLDGroups(tldGroups) {
 
 async function main() {
     const loadingIndicator = document.getElementById('loading');
-    loadingIndicator.style.display = 'block';
+    if (loadingIndicator) {
+        loadingIndicator.style.display = 'block'; // Show loading indicator
+    } else {
+        console.error('loadingIndicator not found');
+    }
 
     try {
         const users = await fetchData();
@@ -161,7 +165,9 @@ async function main() {
     } catch (error) {
         console.error('Error in main function:', error);
     } finally {
-        loadingIndicator.style.display = 'none';
+        if (loadingIndicator) {
+            loadingIndicator.style.display = 'none'; // Hide loading indicator
+        }
     }
 }
 
