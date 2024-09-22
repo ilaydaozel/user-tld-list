@@ -11,7 +11,7 @@ A JavaScript application that fetches user data from an API, extracts top-level 
 
 ## Features
 
-- Fetches user data from [JSONPlaceholder](https://jsonplaceholder.typicode.com) and groups users by their website's TLD.
+- Fetches user data and groups users by their website's TLD.
 - Displays users' information in grouped columns.
 - Responsive UI.
 - Has 100% unit test coverage.
@@ -33,6 +33,8 @@ Click [here](https://ilaydaozel.github.io/user-tld-list/) to see the deployed pa
    ![image](https://github.com/user-attachments/assets/b8a4d9fb-f7eb-4306-a019-a3655a13be0f)
 
    ![image](https://github.com/user-attachments/assets/ae294881-ac49-49a2-953f-cf5de70a297a)
+
+
    Responsive design
    
 ## Running Tests
